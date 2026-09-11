@@ -1,4 +1,5 @@
 # Orbit
+0.2 This version experimental - in tandem with the Linkedin launch.
 
 ### An experiment in allowing structure to emerge from thinking.
 
@@ -70,3 +71,6 @@ The larger idea can wait.
 For now, we're interested in what happens when human reasoning gets somewhere to accumulate.
 
 **Your thinking has provenance.**
+
+© 2026 Third Intelligence Ltd. All rights reserved.
+This repository is published as a public experiment. See the repository history for its development and iterations.
