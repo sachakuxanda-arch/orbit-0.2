@@ -1,1 +1,923 @@
-Orbit 0.2 - First public experiment
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Orbit 0.2 — Third Intelligence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;1,400&family=IBM+Plex+Mono:wght@400&display=swap">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:      #07080C;
+  --surface: #0D0F18;
+  --raised:  #131520;
+  --gold:    #C49A3C;
+  --gold-lo: #6B521A;
+  --text:    #EAE4D8;
+  --sub:     #6E6E80;
+  --dim:     #2A2A38;
+  --border:  #181924;
+}
+
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg); color: var(--text);
+  font-family: 'IBM Plex Sans', sans-serif;
+  min-height: 100vh; -webkit-font-smoothing: antialiased;
+}
+
+.screen { display: none; min-height: 100vh; flex-direction: column; }
+.screen.active { display: flex; }
+
+/* ── Shared ── */
+.btn-gold {
+  background: var(--gold); color: #050505; border: none;
+  padding: 12px 28px; font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 14px; font-weight: 600; letter-spacing: .3px;
+  border-radius: 2px; cursor: pointer; transition: opacity .2s;
+}
+.btn-gold:hover { opacity: .85; }
+.btn-gold:disabled { opacity: .25; cursor: default; }
+
+.btn-outline {
+  background: transparent; border: 1px solid var(--dim); color: var(--sub);
+  padding: 11px 20px; font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 13px; border-radius: 2px; cursor: pointer;
+  transition: border-color .2s, color .2s;
+}
+.btn-outline:hover { border-color: var(--sub); color: var(--text); }
+
+.btn-ghost {
+  background: none; border: none; color: var(--dim);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px; letter-spacing: .5px; cursor: pointer; transition: color .2s;
+}
+.btn-ghost:hover { color: var(--sub); }
+
+/* ══════════════════════════════════════
+   INTRO
+══════════════════════════════════════ */
+#intro { position: relative; overflow: hidden; justify-content: space-between; }
+
+.glow-orb {
+  position: absolute; top: -140px; right: -140px;
+  width: 520px; height: 520px; border-radius: 50%; pointer-events: none;
+  background: radial-gradient(circle at 60% 40%,
+    rgba(196,154,60,.18) 0%, rgba(196,154,60,.05) 38%, transparent 65%);
+}
+.glow-ring {
+  position: absolute; top: -90px; right: -90px;
+  width: 420px; height: 420px; border-radius: 50%;
+  border: 1px solid rgba(196,154,60,.1); pointer-events: none;
+}
+
+.intro-body {
+  position: relative; z-index: 1; flex: 1;
+  display: flex; flex-direction: column; justify-content: center;
+  padding: 64px 48px 40px; max-width: 700px;
+}
+
+.intro-label {
+  font-family: 'IBM Plex Mono', monospace; font-size: 11px;
+  color: var(--sub); letter-spacing: 1px; margin-bottom: 40px;
+}
+
+/* Returning panel */
+.returning-panel {
+  display: none; background: var(--surface);
+  border: 1px solid var(--border); border-left: 3px solid var(--gold-lo);
+  padding: 14px 18px; margin-bottom: 28px; max-width: 440px;
+}
+.returning-label {
+  font-family: 'IBM Plex Mono', monospace; font-size: 10px;
+  color: var(--gold-lo); letter-spacing: 1px; margin-bottom: 10px;
+}
+.returning-graph { width: 100%; height: 44px; display: block; margin-bottom: 8px; }
+.returning-meta { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.returning-count { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--sub); }
+.returning-domains { display: flex; gap: 5px; flex-wrap: wrap; }
+.domain-tag {
+  font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: var(--gold-lo);
+  padding: 2px 7px; border: 1px solid var(--gold-lo); border-radius: 10px;
+}
+
+.intro-headline {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: clamp(38px, 7.5vw, 68px); font-weight: 800;
+  line-height: .95; color: var(--text); text-transform: uppercase; margin-bottom: 10px;
+}
+.intro-or {
+  display: flex; align-items: center; gap: 14px; margin: 12px 0;
+}
+.intro-or::before, .intro-or::after {
+  content: ''; height: 1px; width: 28px; background: var(--dim);
+}
+.intro-or span { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--sub); }
+
+.intro-sub {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: clamp(22px, 4.5vw, 40px); font-weight: 700;
+  line-height: 1.05; color: var(--gold); text-transform: uppercase; margin-bottom: 24px;
+}
+
+.intro-hook { font-size: 14px; color: var(--sub); line-height: 1.85; margin-bottom: 24px; max-width: 480px; }
+
+/* This selector */
+.this-section { margin-bottom: 28px; }
+.this-label {
+  font-family: 'IBM Plex Mono', monospace; font-size: 10px;
+  color: var(--sub); letter-spacing: 1px; margin-bottom: 8px;
+}
+.this-field {
+  display: flex; align-items: stretch; max-width: 440px;
+  background: var(--surface); border: 1px solid var(--gold-lo);
+  border-radius: 2px; cursor: text; transition: border-color .2s; overflow: hidden;
+}
+.this-field:hover { border-color: var(--gold); }
+.this-field.editing { border-color: var(--gold); }
+
+.this-display {
+  flex: 1; padding: 11px 15px;
+  font-family: 'Barlow Condensed', sans-serif; font-size: 19px;
+  font-weight: 700; color: var(--gold); text-transform: uppercase; letter-spacing: .5px;
+  user-select: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.this-input-raw {
+  flex: 1; padding: 11px 15px; display: none;
+  font-family: 'Barlow Condensed', sans-serif; font-size: 19px;
+  font-weight: 700; color: var(--gold); text-transform: uppercase; letter-spacing: .5px;
+  background: transparent; border: none; outline: none; width: 100%;
+}
+.this-edit-btn {
+  padding: 11px 13px; border: none; border-left: 1px solid var(--border);
+  background: none; color: var(--sub); font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px; letter-spacing: .5px; cursor: pointer; transition: color .2s; white-space: nowrap;
+}
+.this-edit-btn:hover { color: var(--gold); }
+.this-hint {
+  font-family: 'IBM Plex Mono', monospace; font-size: 10px;
+  color: var(--dim); letter-spacing: .3px; margin-top: 7px;
+}
+
+.intro-actions { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; margin-bottom: 18px; }
+.intro-privacy { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--dim); letter-spacing: .3px; }
+
+.intro-footer {
+  position: relative; z-index: 1;
+  display: flex; align-items: stretch; border-top: 1px solid var(--border); flex-wrap: wrap;
+}
+.footer-cell {
+  padding: 15px 22px; border-right: 1px solid var(--border);
+  font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--sub);
+}
+.footer-cell strong {
+  display: block; font-family: 'Barlow Condensed', sans-serif;
+  font-size: 20px; font-weight: 700; color: var(--gold); margin-bottom: 1px;
+}
+.footer-cell.tagline {
+  margin-left: auto; border-right: none; font-size: 10px;
+  letter-spacing: 1px; display: flex; align-items: center;
+}
+.footer-cell.tagline em { color: var(--gold); font-style: normal; }
+
+/* ══════════════════════════════════════
+   QUESTION
+══════════════════════════════════════ */
+#question { align-items: center; justify-content: center; padding: 48px 24px; }
+
+.q-wrap { width: 100%; max-width: 600px; }
+.q-meta { display: flex; align-items: center; justify-content: space-between; margin-bottom: 44px; }
+.q-counter { font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: var(--gold); }
+.q-track { width: 100px; height: 2px; background: var(--dim); border-radius: 1px; overflow: hidden; }
+.q-fill { height: 100%; background: var(--gold); border-radius: 1px; transition: width .4s ease; }
+
+.q-text {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: clamp(24px, 4.5vw, 38px); font-weight: 700;
+  color: var(--text); text-transform: uppercase; line-height: 1.1; margin-bottom: 14px;
+}
+.q-text .this-inline { color: var(--gold); }
+
+.q-hint {
+  font-size: 14px; font-style: italic; color: var(--sub);
+  line-height: 1.8; border-left: 2px solid var(--dim);
+  padding-left: 14px; margin-bottom: 26px;
+}
+
+.q-input {
+  width: 100%; background: var(--surface); border: 1px solid var(--border);
+  color: var(--text); font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 15px; line-height: 1.7; padding: 15px 17px;
+  resize: vertical; min-height: 128px; outline: none; border-radius: 2px;
+  transition: border-color .25s; display: block;
+}
+.q-input:focus { border-color: var(--gold-lo); }
+.q-input::placeholder { color: var(--dim); }
+
+.q-actions { display: flex; align-items: center; justify-content: space-between; margin-top: 14px; }
+.btn-next {
+  background: transparent; border: 1px solid var(--gold-lo); color: var(--gold);
+  padding: 10px 24px; font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 14px; font-weight: 500; border-radius: 2px;
+  cursor: pointer; transition: background .2s, color .2s;
+}
+.btn-next:hover:not(:disabled) { background: var(--gold); color: #050505; }
+.btn-next:disabled { opacity: .2; cursor: default; }
+
+/* ══════════════════════════════════════
+   REFLECTION
+══════════════════════════════════════ */
+#reflect { align-items: center; padding: 60px 24px 80px; }
+.ref-wrap { width: 100%; max-width: 620px; }
+
+.ref-kicker { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--gold); letter-spacing: 1px; margin-bottom: 10px; }
+.ref-title {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: clamp(28px, 5vw, 44px); font-weight: 800;
+  text-transform: uppercase; color: var(--text); margin-bottom: 18px; line-height: 1.0;
+}
+.ref-body { font-size: 15px; color: var(--sub); line-height: 1.9; margin-bottom: 36px; max-width: 540px; }
+
+/* Domain */
+.domain-section {
+  background: var(--surface); border: 1px solid var(--border);
+  border-left: 3px solid var(--gold-lo); padding: 20px 22px; margin-bottom: 28px;
+}
+.domain-prompt { font-size: 15px; color: var(--text); font-weight: 500; margin-bottom: 5px; }
+.domain-sub { font-size: 13px; color: var(--sub); line-height: 1.6; margin-bottom: 14px; }
+.domain-input {
+  width: 100%; background: var(--raised); border: 1px solid var(--border);
+  color: var(--gold); font-family: 'Barlow Condensed', sans-serif;
+  font-size: 17px; font-weight: 700; text-transform: uppercase;
+  padding: 9px 13px; outline: none; border-radius: 2px;
+  transition: border-color .2s; letter-spacing: .5px;
+}
+.domain-input:focus { border-color: var(--gold-lo); }
+.domain-input::placeholder { color: var(--dim); font-weight: 600; }
+
+/* Graph */
+.graph-section { margin-bottom: 28px; }
+.graph-label {
+  font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--sub);
+  letter-spacing: 1px; margin-bottom: 10px;
+  display: flex; justify-content: space-between; align-items: center;
+}
+.session-graph {
+  width: 100%; height: 80px; display: block;
+  background: var(--surface); border: 1px solid var(--border); border-radius: 2px;
+}
+.graph-axes { display: flex; justify-content: space-between; margin-top: 4px; }
+.graph-axis { font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: var(--dim); }
+
+/* Opt-in */
+.optin-section {
+  background: var(--surface); border: 1px solid var(--border);
+  padding: 20px 22px; border-radius: 2px; margin-bottom: 32px;
+}
+.optin-text { font-size: 16px; color: var(--text); font-weight: 500; margin-bottom: 5px; }
+.optin-sub { font-size: 13px; color: var(--sub); line-height: 1.65; margin-bottom: 18px; }
+.optin-actions { display: flex; gap: 10px; align-items: center; }
+.optin-kept { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--gold); display: none; }
+
+/* Answers */
+.answers-label { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--sub); letter-spacing: 1px; margin-bottom: 14px; }
+.answer-row { padding: 14px 0; border-bottom: 1px solid var(--border); }
+.answer-row:first-child { border-top: 1px solid var(--border); }
+.answer-q { font-size: 12px; color: var(--gold-lo); margin-bottom: 6px; line-height: 1.4; }
+.answer-a { font-size: 14px; color: var(--text); line-height: 1.75; }
+.answer-a.empty { color: var(--dim); font-style: italic; }
+
+.export-row { display: flex; gap: 10px; flex-wrap: wrap; margin: 28px 0 56px; align-items: center; }
+.copy-confirm { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--gold); opacity: 0; transition: opacity .3s; }
+.copy-confirm.show { opacity: 1; }
+
+.orbit-mark { text-align: center; padding-top: 44px; border-top: 1px solid var(--border); margin-top: 44px; }
+.orbit-name { font-family: 'Barlow Condensed', sans-serif; font-size: 30px; font-weight: 800; letter-spacing: 10px; color: var(--text); text-transform: uppercase; margin-bottom: 6px; }
+.orbit-sub { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--sub); letter-spacing: 2px; margin-bottom: 8px; }
+.orbit-version { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--dim); }
+
+/* ══════════════════════════════════════
+   LIBRARY
+══════════════════════════════════════ */
+#library { align-items: center; padding: 60px 24px 80px; }
+.lib-wrap { width: 100%; max-width: 620px; }
+.lib-header { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 28px; }
+.lib-title { font-family: 'Barlow Condensed', sans-serif; font-size: 36px; font-weight: 800; text-transform: uppercase; color: var(--text); }
+.lib-back { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--sub); background: none; border: none; cursor: pointer; transition: color .2s; }
+.lib-back:hover { color: var(--gold); }
+
+.lib-graph {
+  width: 100%; height: 120px; display: block;
+  background: var(--surface); border: 1px solid var(--border); border-radius: 2px; margin-bottom: 10px;
+}
+.lib-graph-label {
+  font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--dim);
+  letter-spacing: .5px; margin-bottom: 28px;
+  display: flex; justify-content: space-between;
+}
+
+.lib-row {
+  display: grid; grid-template-columns: 72px 1fr 52px;
+  gap: 14px; align-items: start; padding: 14px 0; border-bottom: 1px solid var(--border);
+}
+.lib-row:first-child { border-top: 1px solid var(--border); }
+.lib-date { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--sub); padding-top: 2px; }
+.lib-this { font-size: 14px; color: var(--text); margin-bottom: 3px; }
+.lib-domain { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--gold-lo); }
+.lib-depth { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--dim); text-align: right; padding-top: 2px; }
+
+.lib-empty { font-size: 15px; color: var(--sub); text-align: center; padding: 56px 0; line-height: 1.8; }
+.lib-clear { margin-top: 40px; text-align: center; }
+
+/* ── Mobile ── */
+@media (max-width: 580px) {
+  .intro-body { padding: 44px 22px 28px; }
+  .footer-cell { padding: 12px 16px; }
+  .footer-cell.tagline { display: none; }
+  .glow-orb { width: 240px; height: 240px; top: -60px; right: -60px; }
+  .glow-ring { display: none; }
+  .lib-row { grid-template-columns: 60px 1fr; }
+  .lib-depth { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════
+  SCREEN — INTRO
+══════════════════════════════════════ -->
+<div id="intro" class="screen active">
+  <div class="glow-orb"></div>
+  <div class="glow-ring"></div>
+
+  <div class="intro-body">
+    <div class="intro-label">Third Intelligence · Kernel 001 · v0.2</div>
+
+    <div class="returning-panel" id="returning-panel">
+      <div class="returning-label">Your thinking space</div>
+      <svg class="returning-graph" id="returning-graph"></svg>
+      <div class="returning-meta">
+        <div class="returning-count" id="returning-count"></div>
+        <div class="returning-domains" id="returning-domains"></div>
+      </div>
+    </div>
+
+    <h1 class="intro-headline">Is AI a threat<br>to your future?</h1>
+    <div class="intro-or"><span>or</span></div>
+    <p class="intro-sub">Is your fear of AI<br>a construct of control?</p>
+
+    <p class="intro-hook">
+      One thought. Five questions. One learning loop.<br>
+      What you're about to examine is this:
+    </p>
+
+    <div class="this-section">
+      <div class="this-label">Your starting point</div>
+      <div class="this-field" id="this-field" onclick="activateThis()">
+        <div class="this-display" id="this-display">AI AND YOUR FUTURE</div>
+        <input class="this-input-raw" id="this-input" type="text"
+          placeholder="What's occupying you right now?"
+          onblur="lockThis()" onkeydown="handleThisKey(event)">
+        <button class="this-edit-btn" onclick="event.stopPropagation(); activateThis()">edit</button>
+      </div>
+      <div class="this-hint">Accept this, or click to change it to anything you're carrying.</div>
+    </div>
+
+    <div class="intro-actions">
+      <button class="btn-gold" onclick="begin()">Begin →</button>
+      <button class="btn-ghost" onclick="showScreen('library')">Past sessions</button>
+    </div>
+
+    <p class="intro-privacy" id="privacy-note">Private session · nothing stored · you own the record</p>
+  </div>
+
+  <div class="intro-footer">
+    <div class="footer-cell"><strong>60s</strong>to complete</div>
+    <div class="footer-cell"><strong>5</strong>questions</div>
+    <div class="footer-cell"><strong>v0.2</strong>accumulates</div>
+    <div class="footer-cell tagline">Not prediction. Not reaction. <em>Participation.</em></div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+  SCREEN — QUESTION
+══════════════════════════════════════ -->
+<div id="question" class="screen">
+  <div class="q-wrap">
+    <div class="q-meta">
+      <div class="q-counter" id="q-counter">01 / 05</div>
+      <div class="q-track"><div class="q-fill" id="q-fill" style="width:20%"></div></div>
+    </div>
+    <h2 class="q-text" id="q-text"></h2>
+    <p class="q-hint" id="q-hint"></p>
+    <textarea class="q-input" id="q-input" rows="6"
+      placeholder="The honest answer matters more than the polished one."></textarea>
+    <div class="q-actions">
+      <button class="btn-ghost" onclick="skip()">skip</button>
+      <button class="btn-next" id="btn-next" onclick="advance()" disabled>Continue →</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+  SCREEN — REFLECTION
+══════════════════════════════════════ -->
+<div id="reflect" class="screen">
+  <div class="ref-wrap">
+
+    <div class="ref-kicker">What just happened</div>
+    <h2 class="ref-title">You ran a<br>learning loop.</h2>
+    <p class="ref-body">
+      Most people encounter difficult ideas as headlines — predictions, threats, or promises handed to them already assembled. These five questions interrupted that. They asked you to examine the structure beneath the narrative — the assumptions you arrived with, the fears you hadn't named, the futures you were unconsciously building toward.<br><br>
+      That interruption is the practice.
+    </p>
+
+    <div class="domain-section">
+      <div class="domain-prompt">If this thinking had a name, what would you call it?</div>
+      <div class="domain-sub">Optional. Your words, not ours. It might become something.</div>
+      <input class="domain-input" id="domain-input" type="text"
+        placeholder="e.g. my relationship with uncertainty"
+        maxlength="60" oninput="onDomainInput()">
+    </div>
+
+    <div class="graph-section">
+      <div class="graph-label">
+        <span>Your thinking space</span>
+        <span id="graph-count"></span>
+      </div>
+      <svg class="session-graph" id="session-graph"></svg>
+      <div class="graph-axes">
+        <span class="graph-axis">earlier</span>
+        <span class="graph-axis">↑ depth</span>
+        <span class="graph-axis">now</span>
+      </div>
+    </div>
+
+    <div class="optin-section" id="optin-section">
+      <div class="optin-text">This dot can stay.</div>
+      <div class="optin-sub">
+        Your thinking stays with you, in this browser only.
+        Nothing goes anywhere else. Delete it any time.
+      </div>
+      <div class="optin-actions">
+        <button class="btn-gold" onclick="keepSession()">Keep it</button>
+        <button class="btn-outline" onclick="dismissOptin()">Not yet</button>
+        <span class="optin-kept" id="optin-kept">Kept.</span>
+      </div>
+    </div>
+
+    <div class="answers-label" style="margin-top:32px">Your answers · this session</div>
+    <div id="answers-list"></div>
+
+    <div class="export-row">
+      <button class="btn-gold" onclick="copyAll()">Copy answers</button>
+      <button class="btn-outline" onclick="downloadAll()">Download</button>
+      <button class="btn-outline" onclick="goHome()">Begin again</button>
+      <span class="copy-confirm" id="copy-confirm">Copied.</span>
+    </div>
+
+    <div class="orbit-mark">
+      <div class="orbit-name">O R B I T</div>
+      <div class="orbit-sub">The first practice of Third Intelligence</div>
+      <div class="orbit-version">v0.2 · Not prediction. Not reaction. Participation.</div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════
+  SCREEN — LIBRARY
+══════════════════════════════════════ -->
+<div id="library" class="screen">
+  <div class="lib-wrap">
+    <div class="lib-header">
+      <div class="lib-title">Your sessions</div>
+      <button class="lib-back" onclick="showScreen('intro')">← Back</button>
+    </div>
+    <svg class="lib-graph" id="lib-graph"></svg>
+    <div class="lib-graph-label">
+      <span>earlier</span><span>↑ depth of thinking</span><span>most recent</span>
+    </div>
+    <div id="lib-list"></div>
+    <div class="lib-clear">
+      <button class="btn-ghost" onclick="clearAll()">Clear all sessions</button>
+    </div>
+  </div>
+</div>
+
+
+<script>
+'use strict';
+
+/* ── Constants ───────────────────────────────── */
+const STORE_KEY    = 'orbit_02';
+const THIS_DEFAULT = 'AI and your future';
+
+const QUESTIONS = [
+  {
+    build: t => `What are you actually afraid ${t} will take from you?`,
+    hint: 'Name it specifically. Not "my future" or "my job." What, precisely, do you fear losing?',
+    hasThis: true
+  },
+  {
+    build: () => 'What assumption makes that feel inevitable?',
+    hint: 'Every fear rests on at least one untested assumption. What are you taking as given without proof?'
+  },
+  {
+    build: () => 'What evidence would genuinely change your mind?',
+    hint: 'If you cannot name evidence that would change your mind, you are not reasoning. You are defending a position.'
+  },
+  {
+    build: () => 'Who benefits if you keep believing this?',
+    hint: "Fear is rarely self-generated. Whose interests are served by your certainty? This isn't a conspiracy question — it's a structure question."
+  },
+  {
+    build: () => 'What remains yours regardless?',
+    hint: 'Whatever happens. Whatever the disruption. What cannot be taken because it is generated by how you think, not what you own?'
+  }
+];
+
+/* ── State ───────────────────────────────────── */
+let thisValue   = THIS_DEFAULT;
+let currentQ    = 0;
+let answers     = Array(5).fill('');
+let sessions    = [];
+let domainValue = '';
+let sessionKept = false;
+let pendingSession = null;
+
+/* ── Storage ─────────────────────────────────── */
+function loadSessions() {
+  try { sessions = JSON.parse(localStorage.getItem(STORE_KEY)) || []; }
+  catch { sessions = []; }
+}
+
+function saveSessions() {
+  try { localStorage.setItem(STORE_KEY, JSON.stringify(sessions)); } catch {}
+}
+
+function calcIntensity(ans) {
+  const total = ans.reduce((n, a) =>
+    n + (a ? a.trim().split(/\s+/).filter(Boolean).length : 0), 0);
+  return Math.min(100, Math.round(total / 5 / 35 * 100));
+}
+
+function makeSession() {
+  return {
+    id:        'ORB' + Date.now().toString(36).toUpperCase(),
+    ts:        Date.now(),
+    this:      thisValue,
+    answers:   [...answers],
+    domain:    domainValue.trim() || null,
+    intensity: calcIntensity(answers)
+  };
+}
+
+/* ── Screen management ───────────────────────── */
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+  if (id === 'intro')   setTimeout(refreshIntro, 0);
+  if (id === 'library') setTimeout(buildLibrary, 0);
+}
+
+/* ── "This" selector ─────────────────────────── */
+function activateThis() {
+  const inp = document.getElementById('this-input');
+  if (inp.style.display === 'block') return;
+  const field = document.getElementById('this-field');
+  const disp  = document.getElementById('this-display');
+  field.classList.add('editing');
+  disp.style.display  = 'none';
+  inp.style.display   = 'block';
+  inp.value           = thisValue === THIS_DEFAULT ? '' : thisValue;
+  inp.placeholder     = THIS_DEFAULT;
+  inp.focus();
+}
+
+function lockThis() {
+  const inp   = document.getElementById('this-input');
+  const disp  = document.getElementById('this-display');
+  const field = document.getElementById('this-field');
+  const v     = inp.value.trim() || THIS_DEFAULT;
+  thisValue   = v;
+  disp.textContent   = v.toUpperCase();
+  field.classList.remove('editing');
+  disp.style.display = 'block';
+  inp.style.display  = 'none';
+}
+
+function handleThisKey(e) {
+  if (e.key === 'Enter')  { e.preventDefault(); lockThis(); }
+  if (e.key === 'Escape') { document.getElementById('this-input').value = ''; lockThis(); }
+}
+
+/* ── Question flow ───────────────────────────── */
+function begin() {
+  currentQ   = 0;
+  answers.fill('');
+  domainValue   = '';
+  sessionKept   = false;
+  pendingSession = null;
+  loadQ();
+  showScreen('question');
+}
+
+function loadQ() {
+  const q = QUESTIONS[currentQ];
+  const text = q.build(thisValue);
+
+  document.getElementById('q-counter').textContent = `0${currentQ + 1} / 05`;
+  document.getElementById('q-fill').style.width = `${(currentQ + 1) / 5 * 100}%`;
+
+  const el = document.getElementById('q-text');
+  if (q.hasThis) {
+    const lo  = text.toLowerCase();
+    const tv  = thisValue.toLowerCase();
+    const idx = lo.indexOf(tv);
+    if (idx >= 0) {
+      el.innerHTML =
+        text.slice(0, idx).toUpperCase() +
+        `<span class="this-inline">${text.slice(idx, idx + thisValue.length).toUpperCase()}</span>` +
+        text.slice(idx + thisValue.length).toUpperCase();
+    } else {
+      el.textContent = text.toUpperCase();
+    }
+  } else {
+    el.textContent = text.toUpperCase();
+  }
+
+  document.getElementById('q-hint').textContent = q.hint;
+
+  const ta = document.getElementById('q-input');
+  ta.value = answers[currentQ] || '';
+  ta.placeholder = currentQ === 4
+    ? 'Take your time with this one.'
+    : 'The honest answer matters more than the polished one.';
+
+  updateBtn();
+  setTimeout(() => ta.focus(), 50);
+}
+
+function updateBtn() {
+  document.getElementById('btn-next').disabled =
+    document.getElementById('q-input').value.trim().length < 3;
+}
+
+function advance() {
+  answers[currentQ] = document.getElementById('q-input').value.trim();
+  currentQ < 4 ? (currentQ++, loadQ()) : prepReflect();
+}
+
+function skip() {
+  answers[currentQ] = '';
+  currentQ < 4 ? (currentQ++, loadQ()) : prepReflect();
+}
+
+/* ── Reflection ──────────────────────────────── */
+function prepReflect() {
+  pendingSession = makeSession();
+
+  // Answers list
+  document.getElementById('answers-list').innerHTML = QUESTIONS.map((q, i) => `
+    <div class="answer-row">
+      <div class="answer-q">${q.build(thisValue)}</div>
+      <div class="answer-a ${!answers[i] ? 'empty' : ''}">${answers[i] || 'Skipped'}</div>
+    </div>`).join('');
+
+  // Domain
+  document.getElementById('domain-input').value = '';
+  domainValue = '';
+
+  // Opt-in state
+  sessionKept = false;
+  document.getElementById('optin-section').style.display = 'block';
+  document.getElementById('optin-kept').style.display    = 'none';
+
+  showScreen('reflect');
+
+  // Graph after screen is painted
+  setTimeout(() => {
+    renderGraph('session-graph', sessions, pendingSession, 80);
+    const n = sessions.length + 1;
+    document.getElementById('graph-count').textContent =
+      `${n} session${n !== 1 ? 's' : ''}`;
+  }, 60);
+}
+
+function onDomainInput() {
+  domainValue = document.getElementById('domain-input').value;
+  // Live-update if already kept
+  if (sessionKept && sessions.length > 0) {
+    sessions[sessions.length - 1].domain = domainValue.trim() || null;
+    saveSessions();
+  }
+  if (pendingSession) pendingSession.domain = domainValue.trim() || null;
+}
+
+function keepSession() {
+  if (!pendingSession) return;
+  pendingSession.domain = domainValue.trim() || null;
+  sessions.push(pendingSession);
+  saveSessions();
+  sessionKept = true;
+  document.getElementById('optin-section').style.display = 'none';
+  document.getElementById('optin-kept').style.display    = 'inline';
+  refreshPrivacyNote();
+}
+
+function dismissOptin() {
+  document.getElementById('optin-section').style.display = 'none';
+}
+
+function goHome() {
+  thisValue = THIS_DEFAULT;
+  document.getElementById('this-display').textContent = THIS_DEFAULT.toUpperCase();
+  showScreen('intro');
+}
+
+/* ── Graph rendering ─────────────────────────── */
+function renderGraph(svgId, past, newSess, h) {
+  const svg = document.getElementById(svgId);
+  if (!svg) return;
+  svg.innerHTML = '';
+  const W   = svg.getBoundingClientRect().width || 400;
+  const H   = h || 80;
+  const px  = 18, py = 10;
+  const ns  = 'http://www.w3.org/2000/svg';
+
+  const all = [...past, newSess].filter(Boolean);
+  if (!all.length) return;
+
+  const n = all.length;
+
+  // Midline grid
+  const grid = document.createElementNS(ns, 'line');
+  Object.entries({ x1: px, y1: H/2, x2: W-px, y2: H/2,
+    stroke: '#181924', 'stroke-width': '1', 'stroke-dasharray': '3 6' })
+    .forEach(([k,v]) => grid.setAttribute(k, v));
+  svg.appendChild(grid);
+
+  const pts = all.map((s, i) => ({
+    x: n === 1 ? W/2 : px + (W - px*2) * i / (n - 1),
+    y: py + (H - py*2) * (1 - (s.intensity||0) / 100),
+    s, isNew: i === n-1 && !!newSess
+  }));
+
+  // Connecting line
+  if (pts.length > 1) {
+    const pl = document.createElementNS(ns, 'polyline');
+    pl.setAttribute('points', pts.map(p => `${p.x},${p.y}`).join(' '));
+    pl.setAttribute('fill', 'none');
+    pl.setAttribute('stroke', '#2A2A38');
+    pl.setAttribute('stroke-width', '1.5');
+    svg.appendChild(pl);
+  }
+
+  pts.forEach(({ x, y, s, isNew }) => {
+    // Glow halo for new point
+    if (isNew) {
+      const halo = document.createElementNS(ns, 'circle');
+      Object.entries({ cx: x, cy: y, r: 11, fill: 'rgba(196,154,60,.12)', stroke: 'none' })
+        .forEach(([k,v]) => halo.setAttribute(k,v));
+      svg.appendChild(halo);
+    }
+
+    // Dot
+    const c = document.createElementNS(ns, 'circle');
+    Object.entries({ cx: x, cy: y, r: isNew ? 5 : 3.5,
+      fill: isNew ? '#C49A3C' : '#6B521A', opacity: isNew ? 1 : .7 })
+      .forEach(([k,v]) => c.setAttribute(k,v));
+    svg.appendChild(c);
+
+    // Domain label
+    if (s.domain) {
+      const t = document.createElementNS(ns, 'text');
+      Object.entries({ x, y: y-9, 'text-anchor': 'middle',
+        fill: '#6B521A', 'font-size': '8', 'font-family': 'IBM Plex Mono' })
+        .forEach(([k,v]) => t.setAttribute(k,v));
+      t.textContent = s.domain.slice(0, 16);
+      svg.appendChild(t);
+    }
+  });
+}
+
+/* ── Library ─────────────────────────────────── */
+function buildLibrary() {
+  renderGraph('lib-graph', sessions, null, 120);
+
+  const el = document.getElementById('lib-list');
+  if (!sessions.length) {
+    el.innerHTML = `<div class="lib-empty">
+      No sessions kept yet.<br>
+      Complete a loop and choose to keep it.
+    </div>`;
+    return;
+  }
+
+  el.innerHTML = [...sessions].reverse().map(s => {
+    const d = new Date(s.ts);
+    const ds = d.toLocaleDateString('en-GB', { day:'2-digit', month:'short' });
+    return `<div class="lib-row">
+      <div class="lib-date">${ds}</div>
+      <div>
+        <div class="lib-this">${s.this}</div>
+        ${s.domain ? `<div class="lib-domain">${s.domain}</div>` : ''}
+      </div>
+      <div class="lib-depth">${s.intensity || 0}%</div>
+    </div>`;
+  }).join('');
+}
+
+function clearAll() {
+  if (!confirm('Delete all kept sessions? This cannot be undone.')) return;
+  sessions = [];
+  saveSessions();
+  buildLibrary();
+  refreshIntro();
+}
+
+/* ── Intro refresh ───────────────────────────── */
+function refreshPrivacyNote() {
+  const el = document.getElementById('privacy-note');
+  if (!el) return;
+  el.textContent = sessions.length
+    ? `${sessions.length} session${sessions.length!==1?'s':''} in this browser · you own the record`
+    : 'Private session · nothing stored · you own the record';
+}
+
+function refreshIntro() {
+  refreshPrivacyNote();
+  const panel = document.getElementById('returning-panel');
+
+  if (!sessions.length) { panel.style.display = 'none'; return; }
+
+  panel.style.display = 'block';
+  document.getElementById('returning-count').textContent =
+    `${sessions.length} session${sessions.length!==1?'s':''}`;
+
+  const domains = [...new Set(sessions.filter(s=>s.domain).map(s=>s.domain))];
+  document.getElementById('returning-domains').innerHTML =
+    domains.slice(0,5).map(d => `<div class="domain-tag">${d}</div>`).join('');
+
+  setTimeout(() => renderGraph('returning-graph', sessions, null, 44), 60);
+}
+
+/* ── Export ──────────────────────────────────── */
+function buildText() {
+  const ts = new Date().toLocaleString();
+  return [
+    'ORBIT — THE FIRST PRACTICE OF THIRD INTELLIGENCE',
+    `Session: ${ts}`,
+    `This: ${thisValue}`,
+    domainValue ? `Domain: ${domainValue}` : null,
+    '',
+    '─────────────────────────────────────────',
+    '',
+    ...QUESTIONS.flatMap((q, i) => [
+      `${String(i+1).padStart(2,'0')}  ${q.build(thisValue)}`, '',
+      answers[i] || '(skipped)', ''
+    ]),
+    '─────────────────────────────────────────',
+    '',
+    'You ran a learning loop.',
+    'That interruption is the practice.',
+    '',
+    '─────────────────────────────────────────',
+    'Third Intelligence · Kernel 001 · Orbit v0.2'
+  ].filter(l => l !== null).join('\n');
+}
+
+function copyAll() {
+  navigator.clipboard.writeText(buildText()).then(() => {
+    const el = document.getElementById('copy-confirm');
+    el.classList.add('show');
+    setTimeout(() => el.classList.remove('show'), 2200);
+  });
+}
+
+function downloadAll() {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([buildText()], { type: 'text/plain' }));
+  a.download = `orbit-${new Date().toISOString().slice(0,10)}.txt`;
+  a.click();
+}
+
+/* ── Init ────────────────────────────────────── */
+document.getElementById('q-input').addEventListener('input', updateBtn);
+document.getElementById('q-input').addEventListener('keydown', e => {
+  if ((e.metaKey || e.ctrlKey) && e.key === 'Enter')
+    if (!document.getElementById('btn-next').disabled) advance();
+});
+
+loadSessions();
+refreshIntro();
+</script>
+</body>
+</html>
