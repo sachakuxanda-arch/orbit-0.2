@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Orbit 0.2 — Third Intelligence</title>
+<title>Orbit 0.3 — Third Intelligence</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;1,400&family=IBM+Plex+Mono:wght@400&display=swap">
 <style>
@@ -331,6 +331,58 @@ body {
 .lib-empty { font-size: 15px; color: var(--sub); text-align: center; padding: 56px 0; line-height: 1.8; }
 .lib-clear { margin-top: 40px; text-align: center; }
 
+/* ── Lens selector ── */
+.lens-section { margin-bottom: 24px; }
+.lens-label {
+  font-family: 'IBM Plex Mono', monospace; font-size: 10px;
+  color: var(--sub); letter-spacing: 1px; margin-bottom: 8px;
+}
+.lens-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.lens-opt {
+  font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .5px;
+  padding: 4px 11px; border-radius: 10px; border: 1px solid var(--dim);
+  color: var(--dim); user-select: none;
+}
+.lens-opt.active {
+  color: var(--gold); border-color: var(--gold-lo);
+  display: inline-flex; align-items: center; gap: 5px;
+}
+.lens-opt.active::before {
+  content: ''; width: 5px; height: 5px; border-radius: 50%;
+  background: var(--gold); flex-shrink: 0;
+}
+.lens-more {
+  font-family: 'IBM Plex Mono', monospace; font-size: 9px;
+  color: var(--dim); letter-spacing: .5px; margin-left: 2px;
+}
+
+/* ── Provenance block ── */
+.prov-block {
+  background: var(--surface); border: 1px solid var(--border);
+  border-left: 3px solid var(--dim); padding: 16px 20px; margin-bottom: 28px;
+}
+.prov-kernel {
+  font-family: 'IBM Plex Mono', monospace; font-size: 11px;
+  color: var(--gold-lo); letter-spacing: .8px; margin-bottom: 12px;
+}
+.prov-rows { display: flex; flex-direction: column; gap: 5px; margin-bottom: 12px; }
+.prov-row { display: flex; align-items: baseline; gap: 12px; }
+.prov-key {
+  font-family: 'IBM Plex Mono', monospace; font-size: 10px;
+  color: var(--dim); letter-spacing: .5px; min-width: 76px; flex-shrink: 0;
+}
+.prov-val { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--sub); }
+.prov-principle {
+  font-size: 12px; color: var(--dim); font-style: italic; line-height: 1.7;
+  padding-top: 10px; border-top: 1px solid var(--border);
+}
+
+/* ── Loop close moment ── */
+.ref-orbit-continues {
+  font-size: 14px; color: var(--sub); font-style: italic;
+  margin-bottom: 24px; padding-left: 2px;
+}
+
 /* ── Mobile ── */
 @media (max-width: 580px) {
   .intro-body { padding: 44px 22px 28px; }
@@ -353,7 +405,7 @@ body {
   <div class="glow-ring"></div>
 
   <div class="intro-body">
-    <div class="intro-label">Third Intelligence · Kernel 001 · v0.2</div>
+    <div class="intro-label">Third Intelligence · K001 — Orbit · K2 Iterated · v0.3</div>
 
     <div class="returning-panel" id="returning-panel">
       <div class="returning-label">Your thinking space</div>
@@ -374,7 +426,7 @@ body {
     </p>
 
     <div class="this-section">
-      <div class="this-label">Your starting point</div>
+      <div class="this-label">Your signal</div>
       <div class="this-field" id="this-field" onclick="activateThis()">
         <div class="this-display" id="this-display">AI AND YOUR FUTURE</div>
         <input class="this-input-raw" id="this-input" type="text"
@@ -385,9 +437,20 @@ body {
       <div class="this-hint">Accept this, or click to change it to anything you're carrying.</div>
     </div>
 
+    <div class="lens-section">
+      <div class="lens-label">Loop lens</div>
+      <div class="lens-row">
+        <div class="lens-opt active">Fear</div>
+        <div class="lens-opt">Decision</div>
+        <div class="lens-opt">Opportunity</div>
+        <div class="lens-opt">Belief</div>
+        <span class="lens-more">· other lenses coming</span>
+      </div>
+    </div>
+
     <div class="intro-actions">
       <button class="btn-gold" onclick="begin()">Begin →</button>
-      <button class="btn-ghost" onclick="showScreen('library')">Past sessions</button>
+      <button class="btn-ghost" onclick="showScreen('library')">Closed loops</button>
     </div>
 
     <p class="intro-privacy" id="privacy-note">Private session · nothing stored · you own the record</p>
@@ -396,7 +459,7 @@ body {
   <div class="intro-footer">
     <div class="footer-cell"><strong>60s</strong>to complete</div>
     <div class="footer-cell"><strong>5</strong>questions</div>
-    <div class="footer-cell"><strong>v0.2</strong>accumulates</div>
+    <div class="footer-cell"><strong>v0.3</strong>accumulates</div>
     <div class="footer-cell tagline">Not prediction. Not reaction. <em>Participation.</em></div>
   </div>
 </div>
@@ -430,10 +493,11 @@ body {
   <div class="ref-wrap">
 
     <div class="ref-kicker">What just happened</div>
-    <h2 class="ref-title">You ran a<br>learning loop.</h2>
+    <h2 class="ref-title">The loop closed.</h2>
+    <p class="ref-orbit-continues">The orbit continues from a different position.</p>
     <p class="ref-body">
       Most people encounter difficult ideas as headlines — predictions, threats, or promises handed to them already assembled. These five questions interrupted that. They asked you to examine the structure beneath the narrative — the assumptions you arrived with, the fears you hadn't named, the futures you were unconsciously building toward.<br><br>
-      That interruption is the practice.
+      That interruption is the practice. You don't return to exactly the same point. You return with more understanding.
     </p>
 
     <div class="domain-section">
@@ -444,9 +508,32 @@ body {
         maxlength="60" oninput="onDomainInput()">
     </div>
 
+    <div class="prov-block">
+      <div class="prov-kernel">KERNEL 001 — ORBIT · K2 ITERATED</div>
+      <div class="prov-rows">
+        <div class="prov-row">
+          <div class="prov-key">Signal</div>
+          <div class="prov-val" id="prov-signal"></div>
+        </div>
+        <div class="prov-row">
+          <div class="prov-key">Loop lens</div>
+          <div class="prov-val">Fear</div>
+        </div>
+        <div class="prov-row">
+          <div class="prov-key">Engine</div>
+          <div class="prov-val">Orbit v0.3.0</div>
+        </div>
+        <div class="prov-row">
+          <div class="prov-key">Origin</div>
+          <div class="prov-val">Third Intelligence · 2024</div>
+        </div>
+      </div>
+      <div class="prov-principle">The person owns their experience. The network can benefit from what they choose to contribute.</div>
+    </div>
+
     <div class="graph-section">
       <div class="graph-label">
-        <span>Your thinking space</span>
+        <span>Closed loops</span>
         <span id="graph-count"></span>
       </div>
       <svg class="session-graph" id="session-graph"></svg>
@@ -476,14 +563,14 @@ body {
     <div class="export-row">
       <button class="btn-gold" onclick="copyAll()">Copy answers</button>
       <button class="btn-outline" onclick="downloadAll()">Download</button>
-      <button class="btn-outline" onclick="goHome()">Begin again</button>
+      <button class="btn-outline" onclick="goHome()">Begin next loop</button>
       <span class="copy-confirm" id="copy-confirm">Copied.</span>
     </div>
 
     <div class="orbit-mark">
       <div class="orbit-name">O R B I T</div>
       <div class="orbit-sub">The first practice of Third Intelligence</div>
-      <div class="orbit-version">v0.2 · Not prediction. Not reaction. Participation.</div>
+      <div class="orbit-version">v0.3 · Not prediction. Not reaction. Participation.</div>
     </div>
 
   </div>
@@ -496,7 +583,7 @@ body {
 <div id="library" class="screen">
   <div class="lib-wrap">
     <div class="lib-header">
-      <div class="lib-title">Your sessions</div>
+      <div class="lib-title">Closed loops</div>
       <button class="lib-back" onclick="showScreen('intro')">← Back</button>
     </div>
     <svg class="lib-graph" id="lib-graph"></svg>
@@ -514,8 +601,25 @@ body {
 <script>
 'use strict';
 
+/* ── Architecture ────────────────────────────── */
+const ENGINE = { version: '0.3.0', name: 'Orbit' };
+
+const KERNEL = {
+  id: 'K001', name: 'Orbit', maturity: 'K2',
+  maturityLabel: 'Iterated', origin: 'Third Intelligence', since: '2024'
+};
+
+const LENSES = [
+  { id: 'fear',        label: 'Fear',        active: true  },
+  { id: 'decision',    label: 'Decision',    active: false },
+  { id: 'opportunity', label: 'Opportunity', active: false },
+  { id: 'belief',      label: 'Belief',      active: false }
+];
+
+const ACTIVE_LENS = LENSES.find(l => l.active);
+
 /* ── Constants ───────────────────────────────── */
-const STORE_KEY    = 'orbit_02';
+const STORE_KEY    = 'orbit_03';
 const THIS_DEFAULT = 'AI and your future';
 
 const QUESTIONS = [
@@ -571,6 +675,8 @@ function makeSession() {
   return {
     id:        'ORB' + Date.now().toString(36).toUpperCase(),
     ts:        Date.now(),
+    kernel:    KERNEL.id,
+    lens:      ACTIVE_LENS.id,
     this:      thisValue,
     answers:   [...answers],
     domain:    domainValue.trim() || null,
@@ -700,6 +806,9 @@ function prepReflect() {
   document.getElementById('optin-section').style.display = 'block';
   document.getElementById('optin-kept').style.display    = 'none';
 
+  // Populate provenance signal
+  document.getElementById('prov-signal').textContent = thisValue;
+
   showScreen('reflect');
 
   // Graph after screen is painted
@@ -707,7 +816,7 @@ function prepReflect() {
     renderGraph('session-graph', sessions, pendingSession, 80);
     const n = sessions.length + 1;
     document.getElementById('graph-count').textContent =
-      `${n} session${n !== 1 ? 's' : ''}`;
+      `${n} loop${n !== 1 ? 's' : ''}`;
   }, 60);
 }
 
@@ -815,7 +924,7 @@ function buildLibrary() {
   const el = document.getElementById('lib-list');
   if (!sessions.length) {
     el.innerHTML = `<div class="lib-empty">
-      No sessions kept yet.<br>
+      No loops kept yet.<br>
       Complete a loop and choose to keep it.
     </div>`;
     return;
@@ -824,11 +933,15 @@ function buildLibrary() {
   el.innerHTML = [...sessions].reverse().map(s => {
     const d = new Date(s.ts);
     const ds = d.toLocaleDateString('en-GB', { day:'2-digit', month:'short' });
+    const lensLabel = (s.lens || 'fear').charAt(0).toUpperCase() + (s.lens || 'fear').slice(1);
     return `<div class="lib-row">
       <div class="lib-date">${ds}</div>
       <div>
         <div class="lib-this">${s.this}</div>
-        ${s.domain ? `<div class="lib-domain">${s.domain}</div>` : ''}
+        <div class="lib-domain" style="display:flex;gap:8px;align-items:center;margin-top:2px">
+          ${s.domain ? `<span>${s.domain}</span>` : ''}
+          <span style="color:var(--dim);font-size:9px">${lensLabel} lens</span>
+        </div>
       </div>
       <div class="lib-depth">${s.intensity || 0}%</div>
     </div>`;
@@ -836,7 +949,7 @@ function buildLibrary() {
 }
 
 function clearAll() {
-  if (!confirm('Delete all kept sessions? This cannot be undone.')) return;
+  if (!confirm('Delete all closed loops? This cannot be undone.')) return;
   sessions = [];
   saveSessions();
   buildLibrary();
@@ -848,8 +961,8 @@ function refreshPrivacyNote() {
   const el = document.getElementById('privacy-note');
   if (!el) return;
   el.textContent = sessions.length
-    ? `${sessions.length} session${sessions.length!==1?'s':''} in this browser · you own the record`
-    : 'Private session · nothing stored · you own the record';
+    ? `${sessions.length} closed loop${sessions.length!==1?'s':''} in this browser · you own the record`
+    : 'Private loop · nothing stored · you own the record';
 }
 
 function refreshIntro() {
@@ -860,7 +973,7 @@ function refreshIntro() {
 
   panel.style.display = 'block';
   document.getElementById('returning-count').textContent =
-    `${sessions.length} session${sessions.length!==1?'s':''}`;
+    `${sessions.length} closed loop${sessions.length!==1?'s':''}`;
 
   const domains = [...new Set(sessions.filter(s=>s.domain).map(s=>s.domain))];
   document.getElementById('returning-domains').innerHTML =
@@ -874,23 +987,43 @@ function buildText() {
   const ts = new Date().toLocaleString();
   return [
     'ORBIT — THE FIRST PRACTICE OF THIRD INTELLIGENCE',
-    `Session: ${ts}`,
-    `This: ${thisValue}`,
+    `Loop closed: ${ts}`,
+    '',
+    '── KERNEL PROVENANCE ──────────────────────────',
+    `Kernel:    ${KERNEL.id} — ${KERNEL.name} · ${KERNEL.maturity} ${KERNEL.maturityLabel}`,
+    `Loop lens: ${ACTIVE_LENS.label}`,
+    `Engine:    Orbit v${ENGINE.version}`,
+    `Origin:    ${KERNEL.origin} · ${KERNEL.since}`,
+    '',
+    '── SIGNAL ─────────────────────────────────────',
+    thisValue,
     domainValue ? `Domain: ${domainValue}` : null,
     '',
-    '─────────────────────────────────────────',
+    '── LOOP ───────────────────────────────────────',
     '',
     ...QUESTIONS.flatMap((q, i) => [
-      `${String(i+1).padStart(2,'0')}  ${q.build(thisValue)}`, '',
-      answers[i] || '(skipped)', ''
+      `${String(i+1).padStart(2,'0')}  ${q.build(thisValue)}`,
+      '',
+      answers[i] || '(skipped)',
+      ''
     ]),
-    '─────────────────────────────────────────',
+    '── ITERATION RECORD ───────────────────────────',
     '',
-    'You ran a learning loop.',
-    'That interruption is the practice.',
+    `Signal examined:  ${thisValue}`,
+    `Domain named:     ${domainValue || '(not named)'}`,
+    `Loop lens:        ${ACTIVE_LENS.label}`,
+    `Kernel:           ${KERNEL.id} · ${KERNEL.maturity}`,
     '',
-    '─────────────────────────────────────────',
-    'Third Intelligence · Kernel 001 · Orbit v0.2'
+    'What was observed:  (record when outcome is known)',
+    'What changed:       (record when outcome is known)',
+    '',
+    '───────────────────────────────────────────────',
+    'The loop closed. The orbit continues.',
+    '',
+    `The person owns their experience.`,
+    `The network can benefit from what they choose to contribute.`,
+    '',
+    `Third Intelligence · ${KERNEL.id} — ${KERNEL.name} · v${ENGINE.version}`
   ].filter(l => l !== null).join('\n');
 }
 
@@ -921,4 +1054,3 @@ refreshIntro();
 </script>
 </body>
 </html>
-
