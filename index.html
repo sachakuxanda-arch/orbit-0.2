@@ -383,6 +383,82 @@ body {
   margin-bottom: 24px; padding-left: 2px;
 }
 
+/* ── Loop states in library ── */
+.lib-row.is-open  { border-left: 2px solid var(--gold-lo); padding-left: 14px; margin-left: -16px; }
+.lib-row.is-closed { border-left: 2px solid var(--dim); padding-left: 14px; margin-left: -16px; opacity: .75; }
+.lib-state { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: .5px; margin-top: 5px; display: flex; align-items: center; gap: 6px; }
+.lib-state.open  { color: var(--gold-lo); }
+.lib-state.closed { color: var(--dim); }
+.lib-outcome { font-size: 12px; color: var(--sub); margin-top: 5px; line-height: 1.6; font-style: italic; }
+.lib-close-btn {
+  font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--gold);
+  background: none; border: 1px solid var(--gold-lo); padding: 3px 9px;
+  border-radius: 2px; cursor: pointer; margin-top: 7px; letter-spacing: .5px;
+  display: inline-block; transition: background .2s, color .2s;
+}
+.lib-close-btn:hover { background: var(--gold-lo); color: var(--text); }
+
+/* ── Loop closer screen ── */
+#close-loop { align-items: center; padding: 60px 24px 80px; }
+.cl-wrap { width: 100%; max-width: 560px; }
+.cl-original {
+  background: var(--surface); border-left: 3px solid var(--gold-lo);
+  padding: 12px 16px; margin-bottom: 32px;
+}
+.cl-original-label { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--gold-lo); letter-spacing: 1px; margin-bottom: 6px; }
+.cl-original-signal { font-size: 14px; color: var(--sub); line-height: 1.65; }
+.cl-section { margin-bottom: 24px; }
+.cl-label { font-size: 16px; font-weight: 500; color: var(--text); font-family: 'Syne', sans-serif; margin-bottom: 5px; }
+.cl-sub { font-size: 13px; color: var(--sub); line-height: 1.6; margin-bottom: 12px; }
+.cl-done {
+  text-align: center; padding: 40px 0; display: none;
+}
+.cl-done-title {
+  font-family: 'Barlow Condensed', sans-serif; font-size: 36px; font-weight: 800;
+  text-transform: uppercase; color: var(--text); margin-bottom: 8px;
+}
+.cl-done-sub { font-size: 14px; color: var(--sub); margin-bottom: 24px; }
+
+/* ── Skip nudge ── */
+.skip-nudge {
+  background: var(--surface); border: 1px solid var(--dim);
+  border-left: 3px solid var(--gold-lo); padding: 14px 18px; margin-bottom: 24px;
+  display: none;
+}
+.skip-nudge p { font-size: 14px; color: var(--sub); line-height: 1.7; margin-bottom: 10px; }
+
+/* ── Next step block ── */
+.next-step {
+  background: var(--surface); border: 1px solid var(--border);
+  border-left: 3px solid var(--gold-lo); padding: 20px 22px;
+  margin-bottom: 28px;
+}
+.next-step-eyebrow {
+  font-family: 'IBM Plex Mono', monospace; font-size: 10px;
+  color: var(--gold-lo); letter-spacing: 1px; margin-bottom: 8px;
+}
+.next-step-line {
+  font-size: 15px; color: var(--text); font-weight: 500;
+  margin-bottom: 6px;
+}
+.next-step-sub {
+  font-size: 13px; color: var(--sub); line-height: 1.75; margin-bottom: 16px;
+}
+.next-step-link {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: 'IBM Plex Mono', monospace; font-size: 12px;
+  color: var(--gold); text-decoration: none; letter-spacing: .3px;
+  border-bottom: 1px solid var(--gold-lo); padding-bottom: 2px;
+  transition: color .2s, border-color .2s;
+}
+.next-step-link:hover { color: var(--text); border-color: var(--sub); }
+
+/* ── Beta closure ── */
+.beta-closure { margin-top: 32px; padding-top: 24px; border-top: 1px solid var(--border); }
+.beta-closure p { font-size: 13px; color: var(--dim); line-height: 1.7; }
+.beta-link { color: var(--gold-lo); text-decoration: none; transition: color .2s; }
+.beta-link:hover { color: var(--gold); }
+
 /* ── Mobile ── */
 @media (max-width: 580px) {
   .intro-body { padding: 44px 22px 28px; }
@@ -418,7 +494,7 @@ body {
 
     <h1 class="intro-headline">Is AI a threat<br>to your future?</h1>
     <div class="intro-or"><span>or</span></div>
-    <p class="intro-sub">Is your fear of AI<br>a construct of control?</p>
+    <p class="intro-sub">Is your response to AI<br>still unexamined?</p>
 
     <p class="intro-hook">
       One thought. Five questions. One learning loop.<br>
@@ -457,7 +533,7 @@ body {
   </div>
 
   <div class="intro-footer">
-    <div class="footer-cell"><strong>60s</strong>to complete</div>
+    <div class="footer-cell"><strong>~5 min</strong>to complete</div>
     <div class="footer-cell"><strong>5</strong>questions</div>
     <div class="footer-cell"><strong>v0.3</strong>accumulates</div>
     <div class="footer-cell tagline">Not prediction. Not reaction. <em>Participation.</em></div>
@@ -499,6 +575,11 @@ body {
       Most people encounter difficult ideas as headlines — predictions, threats, or promises handed to them already assembled. These five questions interrupted that. They asked you to examine the structure beneath the narrative — the assumptions you arrived with, the fears you hadn't named, the futures you were unconsciously building toward.<br><br>
       That interruption is the practice. You don't return to exactly the same point. You return with more understanding.
     </p>
+
+    <div class="skip-nudge" id="skip-nudge">
+      <p>Skipped answers make the loop shallow — you can go back and deepen it.</p>
+      <button class="btn-outline" onclick="goBackToQuestions()">Go back →</button>
+    </div>
 
     <div class="domain-section">
       <div class="domain-prompt">If this thinking had a name, what would you call it?</div>
@@ -567,6 +648,30 @@ body {
       <span class="copy-confirm" id="copy-confirm">Copied.</span>
     </div>
 
+    <div class="next-step" id="next-step-block">
+      <div class="next-step-eyebrow">This is Kernel 001</div>
+      <div class="next-step-line">Orbit is the first practice of something larger.</div>
+      <div class="next-step-sub">
+        The infrastructure behind this is being built in public. It is intentionally
+        incomplete — the system finishes itself through use. If you want to see where this is going:
+      </div>
+      <a class="next-step-link" id="next-step-link" href="#" target="_blank" rel="noopener">
+        See what's being built →
+      </a>
+      <div style="margin-top:12px;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--dim);">
+        If you want to be part of what comes next —
+        <a id="waitlist-link" href="#" target="_blank" rel="noopener"
+          style="color:var(--gold-lo);text-decoration:none;border-bottom:1px solid var(--gold-lo);padding-bottom:1px;">
+          join the waitlist
+        </a>
+      </div>
+    </div>
+
+    <div class="beta-closure">
+      <p>This is a beta. When reality responds and the loop wants to close, come back to the library.<br>
+      If something shifted — <a class="beta-link" id="beta-link" href="#">share what happened →</a></p>
+    </div>
+
     <div class="orbit-mark">
       <div class="orbit-name">O R B I T</div>
       <div class="orbit-sub">The first practice of Third Intelligence</div>
@@ -598,6 +703,48 @@ body {
 </div>
 
 
+<!-- ══════════════════════════════════════
+  SCREEN — CLOSE LOOP
+══════════════════════════════════════ -->
+<div id="close-loop" class="screen">
+  <div class="cl-wrap">
+    <div class="lib-header">
+      <div class="lib-title">Close the loop.</div>
+      <button class="lib-back" onclick="showScreen('library')">← Back</button>
+    </div>
+
+    <div class="cl-original">
+      <div class="cl-original-label">Original signal</div>
+      <div class="cl-original-signal" id="cl-signal-text"></div>
+    </div>
+
+    <div id="cl-form">
+      <div class="cl-section">
+        <div class="cl-label">What actually happened?</div>
+        <div class="cl-sub">Reality's response. Not your prediction — what occurred.</div>
+        <textarea class="q-input" id="cl-outcome" rows="5"
+          placeholder="What did reality produce?"></textarea>
+      </div>
+      <div class="cl-section">
+        <div class="cl-label">What changed in your thinking?</div>
+        <div class="cl-sub">What do you understand now that you didn't before?</div>
+        <textarea class="q-input" id="cl-learning" rows="5"
+          placeholder="What shifted?"></textarea>
+      </div>
+      <div style="display:flex;gap:10px;align-items:center;">
+        <button class="btn-gold" onclick="confirmCloseLoop()">Close this loop →</button>
+        <button class="btn-outline" onclick="showScreen('library')">Not yet</button>
+      </div>
+    </div>
+
+    <div class="cl-done" id="cl-done">
+      <div class="cl-done-title">The loop is closed.</div>
+      <div class="cl-done-sub">The orbit continues from a different position.</div>
+      <button class="btn-outline" onclick="showScreen('library')">Return to closed loops</button>
+    </div>
+  </div>
+</div>
+
 <script>
 'use strict';
 
@@ -617,6 +764,9 @@ const LENSES = [
 ];
 
 const ACTIVE_LENS = LENSES.find(l => l.active);
+
+const ORBIT_URL   = 'https://sachakuxanda-arch.github.io/third-intelligence'; // the infrastructure
+const WAITLIST_URL = 'https://sachakuxanda-arch.github.io/adaptivecapacity/#braingym'; // for those who want what's next
 
 /* ── Constants ───────────────────────────────── */
 const STORE_KEY    = 'orbit_03';
@@ -677,10 +827,14 @@ function makeSession() {
     ts:        Date.now(),
     kernel:    KERNEL.id,
     lens:      ACTIVE_LENS.id,
+    state:     'open',
     this:      thisValue,
     answers:   [...answers],
     domain:    domainValue.trim() || null,
-    intensity: calcIntensity(answers)
+    intensity: calcIntensity(answers),
+    outcome:   null,
+    learning:  null,
+    closedAt:  null
   };
 }
 
@@ -805,6 +959,10 @@ function prepReflect() {
   sessionKept = false;
   document.getElementById('optin-section').style.display = 'block';
   document.getElementById('optin-kept').style.display    = 'none';
+
+  // Skip nudge
+  const skipped = answers.filter(a => !a).length;
+  document.getElementById('skip-nudge').style.display = skipped >= 3 ? 'block' : 'none';
 
   // Populate provenance signal
   document.getElementById('prov-signal').textContent = thisValue;
@@ -931,17 +1089,28 @@ function buildLibrary() {
   }
 
   el.innerHTML = [...sessions].reverse().map(s => {
-    const d = new Date(s.ts);
-    const ds = d.toLocaleDateString('en-GB', { day:'2-digit', month:'short' });
-    const lensLabel = (s.lens || 'fear').charAt(0).toUpperCase() + (s.lens || 'fear').slice(1);
-    return `<div class="lib-row">
+    const d   = new Date(s.ts);
+    const ds  = d.toLocaleDateString('en-GB', { day:'2-digit', month:'short' });
+    const lens = (s.lens || 'fear');
+    const lensLabel = lens.charAt(0).toUpperCase() + lens.slice(1);
+    const isClosed = s.state === 'closed';
+    const stateClass = isClosed ? 'is-closed' : 'is-open';
+
+    return `<div class="lib-row ${stateClass}">
       <div class="lib-date">${ds}</div>
       <div>
         <div class="lib-this">${s.this}</div>
-        <div class="lib-domain" style="display:flex;gap:8px;align-items:center;margin-top:2px">
-          ${s.domain ? `<span>${s.domain}</span>` : ''}
-          <span style="color:var(--dim);font-size:9px">${lensLabel} lens</span>
+        <div style="display:flex;gap:8px;align-items:center;margin-top:2px;flex-wrap:wrap">
+          ${s.domain ? `<span class="lib-domain">${s.domain}</span>` : ''}
+          <span style="color:var(--dim);font-size:9px;font-family:'IBM Plex Mono',monospace">${lensLabel} lens</span>
         </div>
+        ${isClosed && s.outcome
+          ? `<div class="lib-outcome">"${s.outcome.slice(0, 80)}${s.outcome.length > 80 ? '…' : ''}"</div>`
+          : ''}
+        <div class="lib-state ${isClosed ? 'closed' : 'open'}">
+          ${isClosed ? '✓ closed' : '⟳ open — awaiting reality'}
+        </div>
+        ${!isClosed ? `<button class="lib-close-btn" onclick="openLoopCloser('${s.id}')">Close this loop →</button>` : ''}
       </div>
       <div class="lib-depth">${s.intensity || 0}%</div>
     </div>`;
@@ -1023,7 +1192,8 @@ function buildText() {
     `The person owns their experience.`,
     `The network can benefit from what they choose to contribute.`,
     '',
-    `Third Intelligence · ${KERNEL.id} — ${KERNEL.name} · v${ENGINE.version}`
+    `Third Intelligence · ${KERNEL.id} — ${KERNEL.name} · v${ENGINE.version}`,
+    `Orbit is Kernel 001. The infrastructure (intentionally incomplete) → ${ORBIT_URL}`
   ].filter(l => l !== null).join('\n');
 }
 
@@ -1042,6 +1212,45 @@ function downloadAll() {
   a.click();
 }
 
+/* ── Loop closer ─────────────────────────────── */
+let closingSessionId = null;
+
+function openLoopCloser(sessionId) {
+  closingSessionId = sessionId;
+  const s = sessions.find(x => x.id === sessionId);
+  if (!s) return;
+  document.getElementById('cl-signal-text').textContent = s.this + (s.domain ? ` · ${s.domain}` : '');
+  document.getElementById('cl-outcome').value  = '';
+  document.getElementById('cl-learning').value = '';
+  document.getElementById('cl-form').style.display = 'block';
+  document.getElementById('cl-done').style.display  = 'none';
+  showScreen('close-loop');
+}
+
+function confirmCloseLoop() {
+  const outcome  = document.getElementById('cl-outcome').value.trim();
+  const learning = document.getElementById('cl-learning').value.trim();
+  if (!outcome && !learning) return;
+
+  const idx = sessions.findIndex(s => s.id === closingSessionId);
+  if (idx < 0) return;
+
+  sessions[idx].state     = 'closed';
+  sessions[idx].outcome   = outcome || null;
+  sessions[idx].learning  = learning || null;
+  sessions[idx].closedAt  = Date.now();
+  saveSessions();
+
+  document.getElementById('cl-form').style.display = 'none';
+  document.getElementById('cl-done').style.display  = 'block';
+}
+
+function goBackToQuestions() {
+  currentQ = 0;
+  loadQ();
+  showScreen('question');
+}
+
 /* ── Init ────────────────────────────────────── */
 document.getElementById('q-input').addEventListener('input', updateBtn);
 document.getElementById('q-input').addEventListener('keydown', e => {
@@ -1051,6 +1260,17 @@ document.getElementById('q-input').addEventListener('keydown', e => {
 
 loadSessions();
 refreshIntro();
+
+// Wire dynamic links
+const blink = document.getElementById('beta-link');
+if (blink) blink.href = `mailto:hello@aibridgework.com?subject=Orbit beta — what shifted&body=Signal: `;
+
+const nslink = document.getElementById('next-step-link');
+if (nslink) nslink.href = ORBIT_URL;
+
+const wlink = document.getElementById('waitlist-link');
+if (wlink) wlink.href = WAITLIST_URL;
+
 </script>
 </body>
 </html>
